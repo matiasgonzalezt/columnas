@@ -1,15 +1,128 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grilla de Cruces Interactivas</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuatro Grillas de Cruces</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    canvas {
+      background-color: white;
+      border: 1px solid black;
+    }
+  </style>
 </head>
 <body>
-  <div class="canvas-container">
-    <canvas id="gridCanvas" width="560" height="560"></canvas>
+  <div class="grid-container">
+    <canvas id="grid0" width="560" height="560"></canvas>
+    <canvas id="grid1" width="560" height="560"></canvas>
+    <canvas id="grid2" width="560" height="560"></canvas>
+    <canvas id="grid3" width="560" height="560"></canvas>
   </div>
-  <script src="script.js"></script>
+
+  <script>
+    const ROWS = 7, COLS = 7, CELL_SIZE = 80;
+    const ARM_LENGTHS = [5, 10, 15, 20, 25, 30];
+    const PEN_WIDTHS = [0, 2, 3, 4, 5, 6, 7];
+
+    const canvases = ["grid0", "grid1", "grid2", "grid3"].map(id => document.getElementById(id));
+    const contexts = canvases.map(c => c.getContext("2d"));
+
+    const grids = Array(4).fill().map(() => {
+      return Array(ROWS).fill().map(() => Array(COLS).fill().map(() => ({
+        armIndex: 2,
+        penWidthIndex: 1
+      })));
+    });
+
+    function drawAll() {
+      for (let g = 0; g < 4; g++) {
+        const ctx = contexts[g];
+        const grid = grids[g];
+        ctx.clearRect(0, 0, 560, 560);
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const { armIndex, penWidthIndex } = grid[r][c];
+            if (PEN_WIDTHS[penWidthIndex] === 0) continue;
+            const cx = c * CELL_SIZE + CELL_SIZE / 2;
+            const cy = r * CELL_SIZE + CELL_SIZE / 2;
+            const arm = ARM_LENGTHS[armIndex];
+            ctx.lineWidth = PEN_WIDTHS[penWidthIndex];
+            ctx.strokeStyle = "black";
+            ctx.beginPath();
+            ctx.moveTo(cx - arm, cy);
+            ctx.lineTo(cx + arm, cy);
+            ctx.moveTo(cx, cy - arm);
+            ctx.lineTo(cx, cy + arm);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    drawAll();
+
+    function getCell(x, y) {
+      return {
+        row: Math.floor(y / CELL_SIZE),
+        col: Math.floor(x / CELL_SIZE)
+      };
+    }
+
+    canvases.forEach((canvas, g) => {
+      canvas.addEventListener("click", e => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        const { row, col } = getCell(x, y);
+        if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+          grids[g][row][col].penWidthIndex = Math.min(grids[g][row][col].penWidthIndex + 1, PEN_WIDTHS.length - 1);
+          drawAll();
+        }
+      });
+
+      canvas.addEventListener("contextmenu", e => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        const { row, col } = getCell(x, y);
+        if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+          grids[g][row][col].penWidthIndex = Math.max(grids[g][row][col].penWidthIndex - 1, 0);
+          drawAll();
+        }
+      });
+
+      canvas.addEventListener("wheel", e => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        const { row, col } = getCell(x, y);
+        if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+          let cell = grids[g][row][col];
+          if (e.deltaY < 0) {
+            cell.armIndex = Math.min(cell.armIndex + 1, ARM_LENGTHS.length - 1);
+          } else {
+            cell.armIndex = Math.max(cell.armIndex - 1, 0);
+          }
+          drawAll();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
