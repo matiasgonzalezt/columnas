@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 
 const ROWS = 7;
 const COLS = 7;
-const CELL_SIZE = 80;
+const CELL_SIZE = 60;
 
 const ARM_LENGTHS = [5, 10, 15, 25, 35]; // 6 niveles
 const PEN_WIDTHS = [0, 2, 5, 10, 15, 25];    // 7 niveles
