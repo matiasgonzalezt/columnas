@@ -1,110 +1,108 @@
-const canvas = document.getElementById('gridCanvas');
-const ctx = canvas.getContext('2d');
+const ROWS = 7, COLS = 7, CELL_SIZE = 70;
+const ARM_MIN = 5, ARM_MAX = 30;
+const PEN_MIN = 1, PEN_MAX = 10;
 
-const ROWS = 7;
-const COLS = 7;
-const CELL_SIZE = 60;
+const canvas = document.getElementById("gridCanvas");
+const ctx = canvas.getContext("2d");
 
-const ARM_LENGTHS = [5, 10, 15, 25, 35]; // 6 niveles
-const PEN_WIDTHS = [0, 2, 5, 10, 15, 25];    // 7 niveles
-
-// Estado por cada celda
-const grid = [];
-for(let r=0; r<ROWS; r++) {
-  grid[r] = [];
-  for(let c=0; c<COLS; c++) {
-    grid[r][c] = {
-      armIndex: 2,      // longitud brazo (empieza en 15)
-      penWidthIndex: 1  // grosor (empieza en 2)
-    };
-  }
-}
-
-function drawCross(x, y, armLength, penWidth) {
-  if(penWidth === 0) return; // invisible
-
-  ctx.lineWidth = penWidth;
-  ctx.strokeStyle = 'black';
-  ctx.beginPath();
-
-  // horizontal
-  ctx.moveTo(x - armLength, y);
-  ctx.lineTo(x + armLength, y);
-
-  // vertical
-  ctx.moveTo(x, y - armLength);
-  ctx.lineTo(x, y + armLength);
-
-  ctx.stroke();
-}
+const grid = Array(ROWS).fill().map(() => Array(COLS).fill().map(() => ({
+  armLength: 15,
+  penWidth: 2
+})));
 
 function drawGrid() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for(let r=0; r<ROWS; r++) {
-    for(let c=0; c<COLS; c++) {
-      const cell = grid[r][c];
-      const centerX = c*CELL_SIZE + CELL_SIZE/2;
-      const centerY = r*CELL_SIZE + CELL_SIZE/2;
-      const armLength = ARM_LENGTHS[cell.armIndex];
-      const penWidth = PEN_WIDTHS[cell.penWidthIndex];
-      drawCross(centerX, centerY, armLength, penWidth);
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const { armLength, penWidth } = grid[r][c];
+      if (penWidth <= 0) continue;
+      const cx = c * CELL_SIZE + CELL_SIZE / 2;
+      const cy = r * CELL_SIZE + CELL_SIZE / 2;
+      ctx.lineWidth = penWidth;
+      ctx.strokeStyle = "black";
+      ctx.beginPath();
+      ctx.moveTo(cx - armLength, cy);
+      ctx.lineTo(cx + armLength, cy);
+      ctx.moveTo(cx, cy - armLength);
+      ctx.lineTo(cx, cy + armLength);
+      ctx.stroke();
     }
   }
 }
 
-drawGrid();
-
-// Convertir pixel a celda
-function getCellFromCoords(x, y) {
-  const col = Math.floor(x / CELL_SIZE);
-  const row = Math.floor(y / CELL_SIZE);
-  if(row < 0 || row >= ROWS || col < 0 || col >= COLS) return null;
-  return {row, col};
+function getCell(x, y) {
+  return {
+    row: Math.floor(y / CELL_SIZE),
+    col: Math.floor(x / CELL_SIZE)
+  };
 }
 
-// Manejar clicks y scroll
-canvas.addEventListener('click', (e) => {
+canvas.addEventListener("click", e => {
   const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const cell = getCellFromCoords(x, y);
-  if(!cell) return;
-
-  const {row, col} = cell;
-  // Click izquierdo aumenta grosor
-  grid[row][col].penWidthIndex = Math.min(grid[row][col].penWidthIndex + 1, PEN_WIDTHS.length -1);
-  drawGrid();
-});
-
-canvas.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const cell = getCellFromCoords(x, y);
-  if(!cell) return;
-
-  const {row, col} = cell;
-  // Click derecho disminuye grosor
-  grid[row][col].penWidthIndex = Math.max(grid[row][col].penWidthIndex - 1, 0);
-  drawGrid();
-});
-
-// Scroll para cambiar longitud brazo
-canvas.addEventListener('wheel', (e) => {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const cell = getCellFromCoords(x, y);
-  if(!cell) return;
-
-  const {row, col} = cell;
-
-  if(e.deltaY < 0) { // scrollea arriba: aumentar longitud
-    grid[row][col].armIndex = Math.min(grid[row][col].armIndex + 1, ARM_LENGTHS.length -1);
-  } else {           // scrollea abajo: disminuir longitud
-    grid[row][col].armIndex = Math.max(grid[row][col].armIndex - 1, 0);
+  const x = e.clientX - rect.left, y = e.clientY - rect.top;
+  const { row, col } = getCell(x, y);
+  if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+    grid[row][col].penWidth = Math.min(grid[row][col].penWidth + 1, PEN_MAX);
+    drawGrid();
   }
-  drawGrid();
 });
+
+canvas.addEventListener("contextmenu", e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left, y = e.clientY - rect.top;
+  const { row, col } = getCell(x, y);
+  if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+    grid[row][col].penWidth = Math.max(grid[row][col].penWidth - 1, 0);
+    drawGrid();
+  }
+});
+
+canvas.addEventListener("wheel", e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left, y = e.clientY - rect.top;
+  const { row, col } = getCell(x, y);
+  if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+    let cell = grid[row][col];
+    cell.armLength += e.deltaY < 0 ? 1 : -1;
+    cell.armLength = Math.max(ARM_MIN, Math.min(ARM_MAX, cell.armLength));
+    drawGrid();
+  }
+});
+
+const colWidthSlider = document.getElementById("colWidthSlider");
+const colLengthSlider = document.getElementById("colLengthSlider");
+const rowWidthSlider = document.getElementById("rowWidthSlider");
+const rowLengthSlider = document.getElementById("rowLengthSlider");
+
+function applyAllDistributions() {
+  const rowLengthFactor = (100 - parseInt(rowLengthSlider.value)) / 100;
+  const rowWidthFactor  = (100 - parseInt(rowWidthSlider.value)) / 100;
+  const colLengthFactor = parseInt(colLengthSlider.value) / 100;
+  const colWidthFactor  = parseInt(colWidthSlider.value) / 100;
+
+  for (let r = 0; r < ROWS; r++) {
+    const rowLInterp = rowLengthFactor * (1 - r / (ROWS - 1)) + (1 - rowLengthFactor) * (r / (ROWS - 1));
+    const rowWInterp = rowWidthFactor * (1 - r / (ROWS - 1)) + (1 - rowWidthFactor) * (r / (ROWS - 1));
+    for (let c = 0; c < COLS; c++) {
+      const colLInterp = colLengthFactor * (1 - c / (COLS - 1)) + (1 - colLengthFactor) * (c / (COLS - 1));
+      const colWInterp = colWidthFactor * (1 - c / (COLS - 1)) + (1 - colWidthFactor) * (c / (COLS - 1));
+
+      const armMix = rowLInterp * colLInterp;
+      const penMix = rowWInterp * colWInterp;
+
+      grid[r][c].armLength = ARM_MIN + armMix * (ARM_MAX - ARM_MIN);
+      grid[r][c].penWidth  = PEN_MIN + penMix * (PEN_MAX - PEN_MIN);
+    }
+  }
+
+  drawGrid();
+}
+
+rowLengthSlider.addEventListener("input", applyAllDistributions);
+rowWidthSlider.addEventListener("input", applyAllDistributions);
+colLengthSlider.addEventListener("input", applyAllDistributions);
+colWidthSlider.addEventListener("input", applyAllDistributions);
+
+applyAllDistributions();
