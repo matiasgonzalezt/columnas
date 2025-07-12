@@ -4,26 +4,67 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>cruciformer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 <body>
-  <div class="layout">
-    <div class="left-panel">
-      <input type="range" id="rowWidthSlider" class="slider-vertical" min="0" max="100" value="50" />
-      <input type="range" id="rowLengthSlider" class="slider-vertical" min="0" max="100" value="50" />
-    </div>
+<div class="header">
+  <h1 class="header-title">cruciformer</h1>
+  <p class="header-subtitle">generador de columnas</p>
+</div>
 
-    <div class="center-panel">
-      <canvas id="gridCanvas" width="500" height="500"></canvas>
-      <div class="bottom-panel">
-        <input type="range" id="colWidthSlider" class="slider-horizontal" min="0" max="100" value="50" />
-        <input type="range" id="colLengthSlider" class="slider-horizontal" min="0" max="100" value="50" />
-      </div>
+<div class="layout">
+  <div class="left-panel">
+    <div class="slider-container">
+      <span style="margin-bottom: 150px; display: inline-block;">Grosor por fila</span>
+      <input type="range" id="rowWidthSlider" class="slider-vertical" min="0" max="100" value="50">
     </div>
-
-    <div class="right-panel"></div>
+    <div class="slider-container">
+      <span style="margin-bottom: 150px; display: inline-block;">Longitud por fila</span>
+      <input type="range" id="rowLengthSlider" class="slider-vertical" min="0" max="100" value="50">
+    </div>
   </div>
 
-  <script src="script.js"></script>
+  <div class="center-panel">
+    <canvas id="gridCanvas" width="500" height="500"></canvas>
+        
+    <div class="bottom-panel">
+  <div class="slider-container">
+    <span>Grosor por columna</span>
+    <input type="range" id="colWidthSlider" class="slider-horizontal" min="0" max="100" value="50">
+  </div>
+  <div class="slider-container">
+    <span>Longitud por columna</span>
+    <input type="range" id="colLengthSlider" class="slider-horizontal" min="0" max="100" value="50">
+  </div>
+</div>
+  </div>
+
+  <div class="right-panel">
+    <div class="instrucciones">
+      <h2>¿Cómo funciona?</h2>
+      <p>
+        La grilla muestra columnas en forma de cruz. <br>
+        Usá los <strong>sliders de abajo</strong> para modificar el grosor y el largo de las columnas a lo largo de las columnas (horizontalmente).<br><br>
+        Usá los <strong>sliders de la izquierda</strong> para hacer lo mismo pero a lo largo de las filas (verticalmente).<br><br>
+        <em>Click derecho</em> aumenta el grosor de una cruz. <br>
+        <em>Click izquierdo</em> lo reduce. <br>
+        <em>Scroll</em> cambia el largo de brazos de una cruz individual.
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>
+    Desarrollado por Matías González Trimigliozzi<br>
+        <a href="https://www.linkedin.com/in/matiasgonzalezt" target="_blank" style="color: red; text-decoration: none;">
+      LinkedIn
+    </a>
+  </p>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>

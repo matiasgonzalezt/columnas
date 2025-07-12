@@ -1,29 +1,30 @@
 body {
-  margin: 0;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  font-family: 'Archivo', sans-serif;
+  font-size: 18px;
+  text-align: center;
 }
 
 .layout {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: auto auto;
-  gap: 20px;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
   align-items: center;
   justify-items: center;
 }
 
 .left-panel {
-  margin-top: 245px;
+  margin-top: 200px;
   display: flex;
   flex-direction: row;
   gap: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
 .center-panel {
+  width: 500px;
+  margin-top: -100px;
   grid-column: 2;
   grid-row: 1 / span 2;
   display: flex;
@@ -34,8 +35,19 @@ body {
 .right-panel {
   grid-column: 3;
   grid-row: 1;
+  align-items: center;
+  text-align: justify;
+}
+.left-panel .slider-container {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+.left-panel input[type=range] {
+  width: 100%;
+}
 .bottom-panel {
   margin-top: 50px;
   display: flex;
@@ -44,18 +56,37 @@ body {
   align-items: center;
 }
 
-.slider-vertical {
-  transform: rotate(90deg);
-  width: 35px;
+.slider-container span {
+  margin-bottom: 14px;
+  font-family: 'Archivo', sans-serif;
+  font-size: 14px;
 }
 
+.slider-vertical {
+  width: min-content;
+  transform: rotate(90deg);
+  margin-right: 0px;
+  margin-top: 0px;
+  margin-bottom: 550px;
+  align-self: center;
+  justify-self: center;
+}
+ 
 .slider-horizontal {
-  transform: rotate(180deg);
-  width: 350px;
+  margin-top: 10px;
+}
+
+.left-panel .slider-container:nth-child(1) {
+  transform: translateX(100px);
+}
+
+.left-panel .slider-container:nth-child(2) {
+  transform: translateX(10px);
 }
 
 input[type=range] {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 10px;
   background: red;
@@ -83,7 +114,48 @@ input[type=range]::-moz-range-thumb {
   cursor: pointer;
 }
 
+input[type=range]::-moz-range-track {
+  height: 10px;
+  background: red;
+  border-radius: 5px;
+}
+
+input[type=range]::-ms-fill-lower {
+  background: red;
+  border-radius: 5px;
+}
+
+input[type=range]::-ms-fill-upper {
+  background: red;
+  border-radius: 5px;
+}
+
+input[type=range]::-ms-thumb {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: 2px solid black;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
 canvas {
   background-color: white;
-  border: 1px solid black;
+  text-align: center;
+  font-family: 'Archivo', sans-serif;
+  line-height: 2;
+}
+
+.instrucciones {
+  margin-top: -300px;
+  max-width: 200px;
+  font-size: 14px;
+  color: black;
+  line-height: 1.5;
+}
+
+.instrucciones h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: red;
 }

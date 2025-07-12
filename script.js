@@ -1,10 +1,11 @@
 const ROWS = 7, COLS = 7, CELL_SIZE = 70;
-const ARM_MIN = 5, ARM_MAX = 30;
-const PEN_MIN = 1, PEN_MAX = 10;
+const ARM_MIN = 3, ARM_MAX = 30;
+const PEN_MIN = 1, PEN_MAX = 15;
 
 const canvas = document.getElementById("gridCanvas");
 const ctx = canvas.getContext("2d");
 
+// Use .fill() with undefined and .map() to avoid shared references in multidimensional arrays.
 const grid = Array(ROWS).fill().map(() => Array(COLS).fill().map(() => ({
   armLength: 15,
   penWidth: 2
@@ -69,7 +70,7 @@ canvas.addEventListener("wheel", e => {
     cell.armLength = Math.max(ARM_MIN, Math.min(ARM_MAX, cell.armLength));
     drawGrid();
   }
-});
+}, { passive: false });
 
 const colWidthSlider = document.getElementById("colWidthSlider");
 const colLengthSlider = document.getElementById("colLengthSlider");
@@ -86,8 +87,8 @@ function applyAllDistributions() {
     const rowLInterp = rowLengthFactor * (1 - r / (ROWS - 1)) + (1 - rowLengthFactor) * (r / (ROWS - 1));
     const rowWInterp = rowWidthFactor * (1 - r / (ROWS - 1)) + (1 - rowWidthFactor) * (r / (ROWS - 1));
     for (let c = 0; c < COLS; c++) {
-      const colLInterp = colLengthFactor * (1 - c / (COLS - 1)) + (1 - colLengthFactor) * (c / (COLS - 1));
-      const colWInterp = colWidthFactor * (1 - c / (COLS - 1)) + (1 - colWidthFactor) * (c / (COLS - 1));
+     const colLInterp = colLengthFactor * (c / (COLS - 1)) + (1 - colLengthFactor) * (1 - c / (COLS - 1));
+    const colWInterp = colWidthFactor * (c / (COLS - 1)) + (1 - colWidthFactor) * (1 - c / (COLS - 1));
 
       const armMix = rowLInterp * colLInterp;
       const penMix = rowWInterp * colWInterp;
