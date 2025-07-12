@@ -1,7 +1,18 @@
 body {
   font-family: 'Archivo', sans-serif;
-  font-size: 18px;
   text-align: center;
+}
+
+.header-title {
+ font-size: 36px;
+ font-weight: bold;
+}
+
+.header-subtitle {
+  font-size: 18px;
+  margin-top: -30px;
+  font-weight: lighter;
+  margin-bottom: -50px;
 }
 
 .layout {
@@ -30,14 +41,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .right-panel {
+  margin-left: -50px;
   grid-column: 3;
   grid-row: 1;
   align-items: center;
   text-align: justify;
 }
+
 .left-panel .slider-container {
   width: 200px;
   display: flex;
@@ -48,12 +62,14 @@ body {
 .left-panel input[type=range] {
   width: 100%;
 }
+
 .bottom-panel {
-  margin-top: 50px;
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
+  width: 500px; /* Coincide con el ancho del canvas */
 }
 
 .slider-container span {
@@ -74,6 +90,8 @@ body {
  
 .slider-horizontal {
   margin-top: 10px;
+  align-self: center;
+  justify-self: center
 }
 
 .left-panel .slider-container:nth-child(1) {
@@ -144,6 +162,9 @@ canvas {
   text-align: center;
   font-family: 'Archivo', sans-serif;
   line-height: 2;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
 }
 
 .instrucciones {
@@ -158,4 +179,11 @@ canvas {
   font-size: 18px;
   margin-bottom: 10px;
   color: red;
+}
+
+.footer {
+  margin-top: -125px;
+  font-size: 12px;
+  color: black;
+  text-align: center;
 }
